@@ -24,6 +24,7 @@ module SimpleNavigation
   self.registered_renderers = {
     :list         => SimpleNavigation::Renderer::List,
     :links        => SimpleNavigation::Renderer::Links,
+    :names_only   => SimpleNavigation::Renderer::NamesOnly,
     :breadcrumbs  => SimpleNavigation::Renderer::Breadcrumbs
   }
   
