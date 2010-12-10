@@ -5,11 +5,14 @@ describe SimpleNavigation::Renderer::Breadcrumbs do
 
   describe 'render' do
 
-    def render(current_nav=nil, options={:level => :all})
+    def raw_render(current_nav=nil, options={:level => :all})
       primary_navigation = primary_container
       select_item(current_nav) if current_nav
       setup_renderer_for SimpleNavigation::Renderer::Breadcrumbs, :rails, options
-      HTML::Document.new(@renderer.render(primary_navigation)).root
+      @renderer.render(primary_navigation)
+    end
+    def render(current_nav=nil, options={:level => :all})
+      HTML::Document.new(raw_render(current_nav,options)).root
     end
 
     context 'regarding result' do
@@ -51,6 +54,20 @@ describe SimpleNavigation::Renderer::Breadcrumbs do
       context 'nested sub_navigation' do
         it "should add an a tag for each selected item" do
           HTML::Selector.new('div a').select(render(:subnav1)).should have(2).entries
+        end
+      end
+
+      context 'should respect the :no_container flag' do
+        before(:each) do
+          @raw = raw_render(:invoices, :raw => true)
+        end
+        it "should return an array" do
+          @raw.class.should == Array
+          @raw.should have(1).entries
+        end
+        it "should render the links" do
+          raw_doc = HTML::Document.new(@raw[0]).root
+          HTML::Selector.new('a').select(raw_doc).should have(1).entries
         end
       end
     end

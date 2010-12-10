@@ -11,7 +11,12 @@ module SimpleNavigation
     class Breadcrumbs < SimpleNavigation::Renderer::Base
 
       def render(item_container)
-        content_tag(:div, a_tags(item_container).join(join_with), {:id => item_container.dom_id, :class => item_container.dom_class})
+        data = a_tags(item_container)
+        if options[:raw]
+          data
+        else
+          content_tag(:div, data.join(join_with), {:id => item_container.dom_id, :class => item_container.dom_class})
+        end
       end
 
       protected
