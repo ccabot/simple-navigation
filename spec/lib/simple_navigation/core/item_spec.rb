@@ -118,6 +118,18 @@ describe SimpleNavigation::Item do
     
   end
 
+  describe 'name' do
+    before(:each) do
+      SimpleNavigation.config.stub!(:name_generator => Proc.new {|name| "<span>#{name}</span>"})  
+    end
+    context 'default (generator is applied)' do
+      it {@item.name.should == "<span>name</span>"}
+    end
+    context 'generator is skipped' do
+      it {@item.name(:apply_generator => false).should == 'name'}
+    end
+  end
+
   describe 'selected?' do
     context 'explicitly selected' do
       before(:each) do
@@ -346,6 +358,11 @@ describe SimpleNavigation::Item do
             @adapter.stub!(:current_page? => true)
           end
           it "should test with the item's url" do
+            @adapter.should_receive(:current_page?).with('url')
+            @item.send(:selected_by_url?)
+          end
+          it "should remove anchors before testing the item's url" do
+            @item.stub!(:url => 'url#anchor')
             @adapter.should_receive(:current_page?).with('url')
             @item.send(:selected_by_url?)
           end
